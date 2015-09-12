@@ -51,11 +51,9 @@ getAllCoordinates = [(x,y) | x <- [1..sudokuSize], y <- [1..sudokuSize]]
 thingsWrongWithCell:: Matrix CellType -> (Int,Int) -> Int
 thingsWrongWithCell m p@(x,y) 
   | (isKnown cellAt) = 0
-  | otherwise = length $filter (==True) $ [rowSumIsNot45 || inRowTwoOrMoreTimes, colSumIsNot45 || inColTwoOrMoreTimes,inSquareTwoOrMoreTimes]
+  | otherwise = length $filter (==True) $ [inRowTwoOrMoreTimes, inColTwoOrMoreTimes,inSquareTwoOrMoreTimes]
                           where cellAt = m ! p
                                 inVecTwoOrMoreTimes vec =  (V.length $ V.filter (==cellAt) vec) > 1
-                                rowSumIsNot45 = V.sum $ getRow x m
-                                colSumIsNot45 = V.sum $ getRow y m
                                 inRowTwoOrMoreTimes = inVecTwoOrMoreTimes $ getRow x m
                                 inColTwoOrMoreTimes = inVecTwoOrMoreTimes $ getCol y m
                                 inSpecificSquareTwoOrMoreTimes startRow endRow startCol endCol =  (length $ filter(==cellAt) $ toList $ submatrix startRow endRow startCol endCol m) > 1
@@ -94,9 +92,12 @@ runWithoutLooking inputData = do
   g <- getStdGen
   return $ runGA (g) 8 0.1 (generateStarting (fillInKnowns inputData)) (\m _ -> thingsWrong m == 0)
 
+herdSize = 64
+mutationRate = (0.1)
+
 runAndPeak inputData = do
   g <- getStdGen
-  let (zero,g') = zeroGeneration g (generateStarting (fillInKnowns inputData)) 64
+  let (zero,g') = zeroGeneration g (generateStarting (fillInKnowns inputData)) herdSize
   runAndPeak' zero g'
 
 runAndPeak' curGen g = do
@@ -106,9 +107,18 @@ runAndPeak' curGen g = do
     print "--- FOUND SOLUTION ---"
     print $ head curGen
     return $ head curGen
-    else
-      let (nextGen,g') = nextGeneration g curGen 64 (0.3)  in
-      runAndPeak' nextGen g'
+    else do
+      let fitnesses = map fitness curGen  
+      let areAllEqual = fst $ foldl' (\(prev,a) b -> (prev  && a==b,b) ) (True,head fitnesses)  $fitnesses
+      if areAllEqual then
+        let (mutated,g''') = (foldl' (\(cur, g') gene -> let (m, g'') = mutation g' gene in (m:cur,g''))) ([],g) (drop (herdSize `div` 2) curGen) in
+        runAndPeak' ((take (herdSize `div` 2)curGen) ++mutated) g'''
+        else 
+        let (nextGen,g') = nextGeneration g curGen herdSize mutationRate in 
+            runAndPeak' nextGen g'
 
 testData:: [(Int, Int, Int)]
 testData = [(9,2,1), (3,5,1), (1,8,1), (7,2,2), (2,6,2), (4,9,2),(6,5,3),(8,6,3),(3,8,3), (7,9,3), (5,1,4), (3,2,4), (6,3,4), (1,6,4), (9,7,4), (8,8,4), (1,1,5), (7,3,5), (3,7,5), (4,8,5), (6,9,5), (2,2,6), (8,5,6), (7,8,6), (7,1,7), (5,3,7), (1,4,7), (9,5,7), (4,6,7), (2,1,8), (1,2,8), (3,3,8), (8,4,8), (5,6,8),(6,8,8),(4,2,9),(3,6,9), (1,9,9)]
+
+testData2::[(Int,Int,Int)]
+testData2 = [(5,2,1),(4,4,1),(8,5,1),(2,7,1),(9,8,1),(1,1,2),(7,2,4),(4,3,3),(3,3,7),(6,4,6),(1,7,4),(8,1,5),(3,2,5),(4,8,5),(6,9,5),(9,3,6),(1,4,6),(2,3,7),(6,7,7),(8,6,8),(2,9,8),(4,2,9),(5,3,9),(7,5,9),(9,6,9),(1,8,9)]

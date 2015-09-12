@@ -4,4 +4,4 @@ import Lib
 import Control.Applicative
 
 main :: IO ()
-main =  runAndPeak testData >> return ()
+main =  runAndPeak testData2 >> return ()
