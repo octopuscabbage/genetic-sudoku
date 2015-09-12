@@ -1,0 +1,3 @@
+[submodule "simple-genetic-algorithm"]
+	path = lib/simple-genetic-algorithm
+	url = https://github.com/afiskon/simple-genetic-algorithm
