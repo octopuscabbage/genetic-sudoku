@@ -1,0 +1,6 @@
+flags: {}
+packages:
+- '.'
+- lib/simple-genetic-algorithm
+extra-deps: []
+resolver: lts-2.12
