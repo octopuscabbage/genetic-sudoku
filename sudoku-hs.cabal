@@ -40,7 +40,7 @@ library
 executable sudoku-hs-exe
   hs-source-dirs:      app
   main-is:             Main.hs
-  ghc-options:         -W -threaded -rtsopts -with-rtsopts=-N
+  ghc-options:         -W -eventlog -threaded -rtsopts -with-rtsopts=-N 
   build-depends:       base
                      , sudoku-hs
                      , matrix
