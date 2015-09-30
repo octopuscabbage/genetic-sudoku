@@ -11,6 +11,7 @@ import System.Console.ANSI
 import Control.Parallel.Strategies
 import qualified Data.Vector as V
 import System.TimeIt
+import Control.DeepSeq
 
 type CellMatrix = M.Matrix CellType
 
@@ -18,7 +19,6 @@ instance Ord (M.Matrix CellType) -- | Needed to make a set of CellMatrixes
 
 
 -- | The universal set, represents all the possible values in a set
-universal:: Set Int
 universal = fromList [1..9]
 
 -- | Converts any foldable to a set (most often a vector to a set)
@@ -101,4 +101,5 @@ evaluateIO m (cord@(x,y):cords)
 runBackTrackerPeak inputData = evaluateIO starting getAllCoordinates
                                where starting = fillInKnowns inputData
 
-analyze n input = timeIt $ mapM(\_-> print $ runBackTracker input) [1..n]
+analyzeSolver:: Int -> String -> IO (Double, [Maybe (M.Matrix CellType)])
+analyzeSolver n input = timeItT $ mapM(\_-> return $ force $ runBackTracker input) [1..n]

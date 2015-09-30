@@ -1,8 +1,6 @@
 flags: {}
 packages:
 - '.'
-- lib/simple-genetic-algorithm
 extra-deps:
-- easyplot-1.0
 - timeit-1.0.0.0
-resolver: lts-2.12
+resolver: lts-3.0

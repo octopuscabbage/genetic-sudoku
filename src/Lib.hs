@@ -1,15 +1,17 @@
 module Lib (
   module Lib,
   module BackTracker.BackTracker,
-  module Util
+  module Util,
+  module API
            )where
 import BackTracker.BackTracker
 import Util
 import Types
+import API
+
+
 
 -- | This module just exports other modules and some testing data
-
-testData:: [(Int, Int, Int)]
 testData = [(9,2,1), (3,5,1), (1,8,1), (7,2,2), (2,6,2), (4,9,2),(6,5,3),(8,6,3),(3,8,3), (7,9,3), (5,1,4), (3,2,4), (6,3,4), (1,6,4), (9,7,4), (8,8,4), (1,1,5), (7,3,5), (3,7,5), (4,8,5), (6,9,5), (2,2,6), (8,5,6), (7,8,6), (7,1,7), (5,3,7), (1,4,7), (9,5,7), (4,6,7), (2,1,8), (1,2,8), (3,3,8), (8,4,8), (5,6,8),(6,8,8),(4,2,9),(3,6,9), (1,9,9)]
 
 testData2::[(Int,Int,Int)]

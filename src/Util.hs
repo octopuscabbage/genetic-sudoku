@@ -1,7 +1,6 @@
 module Util where
 
 import Data.Matrix
-import AI.GeneticAlgorithm.Simple
 import System.Random 
 import Data.List (foldl')
 import Types
